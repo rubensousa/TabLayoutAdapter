@@ -9,7 +9,7 @@ import android.view.View;
 
 import com.github.rubensousa.tablayoutadapter.TabLayoutAdapter;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener {
 
     private TabLayoutAdapter mTabLayoutAdapter;
 
@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
         mTabLayoutAdapter.addItem(new DummyFragment(), "Recents", R.drawable.ic_call_24dp);
         mTabLayoutAdapter.addItem(new DummyFragment(), "Favorites", R.drawable.ic_favorite_24dp);
         mTabLayoutAdapter.addItem(new DummyFragment(), "Nearby", R.drawable.ic_nearby_24dp);
+        mTabLayoutAdapter.addOnTabSelectedListener(this);
         //noinspection ConstantConditions
         viewPager.setAdapter(mTabLayoutAdapter);
 
@@ -42,5 +43,26 @@ public class MainActivity extends AppCompatActivity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         mTabLayoutAdapter.restoreInstanceState(savedInstanceState);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mTabLayoutAdapter.removeOnTabSelectedListener(this);
+    }
+
+    @Override
+    public void onTabSelected(TabLayout.Tab tab) {
+
+    }
+
+    @Override
+    public void onTabUnselected(TabLayout.Tab tab) {
+
+    }
+
+    @Override
+    public void onTabReselected(TabLayout.Tab tab) {
+
     }
 }
