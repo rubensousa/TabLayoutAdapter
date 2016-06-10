@@ -96,15 +96,15 @@ public class TabLayoutAdapter extends FragmentStatePagerAdapter
         }
     }
 
-    public void addOnTabSelectedListener(TabLayout.OnTabSelectedListener listener){
+    public void addOnTabSelectedListener(TabLayout.OnTabSelectedListener listener) {
         mOnTabSelectedListeners.add(listener);
     }
 
-    public void removeOnTabSelectedListener(TabLayout.OnTabSelectedListener listener){
+    public void removeOnTabSelectedListener(TabLayout.OnTabSelectedListener listener) {
         mOnTabSelectedListeners.remove(listener);
     }
 
-    public void addItem(Fragment fragment, View customView){
+    public void addItem(Fragment fragment, View customView) {
         mFragments.add(fragment);
     }
 
@@ -166,11 +166,13 @@ public class TabLayoutAdapter extends FragmentStatePagerAdapter
     }
 
     public void restoreInstanceState(Bundle savedInstanceState) {
-        mCurrentTab = savedInstanceState.getInt(SAVE_STATE);
-        if (mCurrentTab != 0 && mTabLayout != null) {
-            TabLayout.Tab tab = mTabLayout.getTabAt(mCurrentTab);
-            if (tab != null) {
-                tab.select();
+        if (savedInstanceState != null) {
+            mCurrentTab = savedInstanceState.getInt(SAVE_STATE);
+            if (mCurrentTab != 0 && mTabLayout != null) {
+                TabLayout.Tab tab = mTabLayout.getTabAt(mCurrentTab);
+                if (tab != null) {
+                    tab.select();
+                }
             }
         }
     }
@@ -183,7 +185,7 @@ public class TabLayoutAdapter extends FragmentStatePagerAdapter
             customView.setAlpha(1f);
         }
 
-        for(TabLayout.OnTabSelectedListener listener : mOnTabSelectedListeners){
+        for (TabLayout.OnTabSelectedListener listener : mOnTabSelectedListeners) {
             listener.onTabSelected(tab);
         }
     }
@@ -194,14 +196,14 @@ public class TabLayoutAdapter extends FragmentStatePagerAdapter
         if (customView != null) {
             customView.setAlpha(0.7f);
         }
-        for(TabLayout.OnTabSelectedListener listener : mOnTabSelectedListeners){
+        for (TabLayout.OnTabSelectedListener listener : mOnTabSelectedListeners) {
             listener.onTabUnselected(tab);
         }
     }
 
     @Override
     public void onTabReselected(TabLayout.Tab tab) {
-        for(TabLayout.OnTabSelectedListener listener : mOnTabSelectedListeners){
+        for (TabLayout.OnTabSelectedListener listener : mOnTabSelectedListeners) {
             listener.onTabReselected(tab);
         }
     }
@@ -215,7 +217,7 @@ public class TabLayoutAdapter extends FragmentStatePagerAdapter
     public void onPageSelected(int position) {
         mCurrentTab = position;
         TabLayout.Tab tab = mTabLayout.getTabAt(position);
-        if(tab != null){
+        if (tab != null) {
             tab.select();
         }
     }
