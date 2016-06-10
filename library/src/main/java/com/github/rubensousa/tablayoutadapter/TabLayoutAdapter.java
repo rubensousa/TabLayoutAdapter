@@ -179,6 +179,9 @@ public class TabLayoutAdapter extends FragmentStatePagerAdapter
 
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
+        if (mCurrentTab != tab.getPosition()) {
+            mViewPager.setCurrentItem(tab.getPosition());
+        }
         mCurrentTab = tab.getPosition();
         View customView = tab.getCustomView();
         if (customView != null) {
