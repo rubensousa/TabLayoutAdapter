@@ -13,7 +13,7 @@ repositories{
 }
 
 dependencies {
-    compile 'com.github.rubensousa:TabLayoutAdapter:-SNAPSHOT'
+    compile 'com.github.rubensousa:TabLayoutAdapter:0.1'
 }
 ```
 ## License
