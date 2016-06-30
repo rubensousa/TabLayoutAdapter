@@ -54,7 +54,7 @@ public class TabLayoutAdapter extends FragmentStatePagerAdapter
         mTabLayout = tabLayout;
         mViewPager = viewPager;
         if (mTabLayout != null) {
-            mTabLayout.setOnTabSelectedListener(this);
+            mTabLayout.addOnTabSelectedListener(this);
         }
         if (mViewPager != null) {
             mViewPager.addOnPageChangeListener(this);
@@ -84,7 +84,8 @@ public class TabLayoutAdapter extends FragmentStatePagerAdapter
     public void attachTabLayout(TabLayout tabLayout) {
         mTabLayout = tabLayout;
         if (mTabLayout != null) {
-            mTabLayout.setOnTabSelectedListener(this);
+            mTabLayout.removeOnTabSelectedListener(this);
+            mTabLayout.addOnTabSelectedListener(this);
         }
     }
 
@@ -195,6 +196,10 @@ public class TabLayoutAdapter extends FragmentStatePagerAdapter
 
     @Override
     public void onTabUnselected(TabLayout.Tab tab) {
+        if (tab == null) {
+            return;
+        }
+
         View customView = tab.getCustomView();
         if (customView != null) {
             customView.setAlpha(0.7f);
