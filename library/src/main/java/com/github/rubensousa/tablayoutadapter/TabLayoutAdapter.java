@@ -37,7 +37,6 @@ public class TabLayoutAdapter extends FragmentStatePagerAdapter
 
     public static final String SAVE_STATE = "state";
 
-    private List<TabLayout.OnTabSelectedListener> mOnTabSelectedListeners;
     private List<Fragment> mFragments;
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
@@ -50,7 +49,6 @@ public class TabLayoutAdapter extends FragmentStatePagerAdapter
     public TabLayoutAdapter(FragmentManager fm, TabLayout tabLayout, ViewPager viewPager) {
         super(fm);
         mFragments = new ArrayList<>();
-        mOnTabSelectedListeners = new ArrayList<>();
         mTabLayout = tabLayout;
         mViewPager = viewPager;
         if (mTabLayout != null) {
@@ -95,14 +93,6 @@ public class TabLayoutAdapter extends FragmentStatePagerAdapter
             mViewPager.removeOnPageChangeListener(this);
             mViewPager.addOnPageChangeListener(this);
         }
-    }
-
-    public void addOnTabSelectedListener(TabLayout.OnTabSelectedListener listener) {
-        mOnTabSelectedListeners.add(listener);
-    }
-
-    public void removeOnTabSelectedListener(TabLayout.OnTabSelectedListener listener) {
-        mOnTabSelectedListeners.remove(listener);
     }
 
     public void addItem(Fragment fragment, View customView) {
@@ -188,10 +178,6 @@ public class TabLayoutAdapter extends FragmentStatePagerAdapter
         if (customView != null) {
             customView.setAlpha(1f);
         }
-
-        for (TabLayout.OnTabSelectedListener listener : mOnTabSelectedListeners) {
-            listener.onTabSelected(tab);
-        }
     }
 
     @Override
@@ -204,16 +190,11 @@ public class TabLayoutAdapter extends FragmentStatePagerAdapter
         if (customView != null) {
             customView.setAlpha(0.7f);
         }
-        for (TabLayout.OnTabSelectedListener listener : mOnTabSelectedListeners) {
-            listener.onTabUnselected(tab);
-        }
     }
 
     @Override
     public void onTabReselected(TabLayout.Tab tab) {
-        for (TabLayout.OnTabSelectedListener listener : mOnTabSelectedListeners) {
-            listener.onTabReselected(tab);
-        }
+
     }
 
     @Override
