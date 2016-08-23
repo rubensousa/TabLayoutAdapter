@@ -79,7 +79,7 @@ public class TabLayoutAdapter extends FragmentStatePagerAdapter
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return mTitles.get(position);
+        return mTitles.isEmpty() ? null : mTitles.get(position);
     }
 
     @Override
@@ -121,6 +121,10 @@ public class TabLayoutAdapter extends FragmentStatePagerAdapter
 
     public void addItem(Fragment fragment, @StringRes int text) {
         addItem(fragment, text, 0);
+    }
+
+    public void addIconItem(Fragment fragment, @DrawableRes int icon) {
+        addItem(fragment, null, icon);
     }
 
     public void addItem(Fragment fragment, CharSequence text) {
