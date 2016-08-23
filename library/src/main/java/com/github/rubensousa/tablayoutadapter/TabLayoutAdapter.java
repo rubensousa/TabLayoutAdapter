@@ -35,6 +35,8 @@ import java.util.List;
 public class TabLayoutAdapter extends FragmentStatePagerAdapter
         implements TabLayout.OnTabSelectedListener, ViewPager.OnPageChangeListener {
 
+    private static final int ALPHA_UNSELECTED = 179;
+    public static final int ALPHA_SELECTED = 255;
     public static final String SAVE_STATE = "state";
 
     private List<Fragment> mFragments;
@@ -97,6 +99,9 @@ public class TabLayoutAdapter extends FragmentStatePagerAdapter
 
     public void addItem(Fragment fragment, View customView) {
         mFragments.add(fragment);
+        TabLayout.Tab tab = mTabLayout.newTab();
+        tab.setCustomView(customView);
+        mTabLayout.addTab(tab);
     }
 
     public void addItem(Fragment fragment, @StringRes int text) {
@@ -108,18 +113,7 @@ public class TabLayoutAdapter extends FragmentStatePagerAdapter
     }
 
     public void addItem(Fragment fragment, @StringRes int text, @DrawableRes int icon) {
-        mFragments.add(fragment);
-        TabLayout.Tab tab = mTabLayout.newTab();
-
-        if (text != 0) {
-            tab.setText(text);
-        }
-
-        if (icon != 0) {
-            tab.setIcon(icon);
-        }
-
-        mTabLayout.addTab(tab);
+        addItem(fragment, mViewPager.getContext().getString(text), icon);
     }
 
     public void addItem(Fragment fragment, CharSequence text, @DrawableRes int icon) {
@@ -132,6 +126,9 @@ public class TabLayoutAdapter extends FragmentStatePagerAdapter
 
         if (icon != 0) {
             tab.setIcon(icon);
+            if (mFragments.size() != 0) {
+                tab.getIcon().setAlpha(ALPHA_UNSELECTED);
+            }
         }
 
         mTabLayout.addTab(tab);
@@ -146,6 +143,9 @@ public class TabLayoutAdapter extends FragmentStatePagerAdapter
         }
 
         if (icon != null) {
+            if (mFragments.size() != 0) {
+                icon.setAlpha(ALPHA_UNSELECTED);
+            }
             tab.setIcon(icon);
         }
 
@@ -180,7 +180,7 @@ public class TabLayoutAdapter extends FragmentStatePagerAdapter
         }
 
         if (tab.getIcon() != null) {
-            tab.getIcon().setAlpha(255);
+            tab.getIcon().setAlpha(ALPHA_SELECTED);
         }
     }
 
@@ -196,7 +196,7 @@ public class TabLayoutAdapter extends FragmentStatePagerAdapter
         }
 
         if (tab.getIcon() != null) {
-            tab.getIcon().setAlpha(179);
+            tab.getIcon().setAlpha(ALPHA_UNSELECTED);
         }
     }
 
