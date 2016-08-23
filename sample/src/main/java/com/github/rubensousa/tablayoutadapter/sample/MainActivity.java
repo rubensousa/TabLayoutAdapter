@@ -25,7 +25,7 @@ import android.view.View;
 
 import com.github.rubensousa.tablayoutadapter.TabLayoutAdapter;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity {
 
     private TabLayoutAdapter mTabLayoutAdapter;
 
@@ -39,8 +39,7 @@ public class MainActivity extends AppCompatActivity{
         mTabLayoutAdapter.addItem(new DummyFragment(), "Recents", R.drawable.ic_call_24dp);
         mTabLayoutAdapter.addItem(new DummyFragment(), "Favorites", R.drawable.ic_favorite_24dp);
         mTabLayoutAdapter.addItem(new DummyFragment(), "Nearby", R.drawable.ic_nearby_24dp);
-        //noinspection ConstantConditions
-        viewPager.setAdapter(mTabLayoutAdapter);
+        mTabLayoutAdapter.createTabs();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             //noinspection ConstantConditions

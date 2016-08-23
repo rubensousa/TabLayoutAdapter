@@ -39,23 +39,29 @@ public class TabLayoutAdapter extends FragmentStatePagerAdapter
     public static final int ALPHA_SELECTED = 255;
     public static final String SAVE_STATE = "state";
 
+    private List<Drawable> mDrawables;
+    private List<Integer> mIcons;
+    private List<CharSequence> mTitles;
     private List<Fragment> mFragments;
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
     private int mCurrentTab;
-
-    public TabLayoutAdapter(FragmentManager fm) {
-        this(fm, null, null);
-    }
+    private int mScrollState;
+    private int mPreviousScrollState;
 
     public TabLayoutAdapter(FragmentManager fm, TabLayout tabLayout, ViewPager viewPager) {
         super(fm);
+        mIcons = new ArrayList<>();
+        mDrawables = new ArrayList<>();
         mFragments = new ArrayList<>();
+        mTitles = new ArrayList<>();
         mTabLayout = tabLayout;
         mViewPager = viewPager;
+
         if (mTabLayout != null) {
             mTabLayout.addOnTabSelectedListener(this);
         }
+
         if (mViewPager != null) {
             mViewPager.addOnPageChangeListener(this);
         }
@@ -72,6 +78,11 @@ public class TabLayoutAdapter extends FragmentStatePagerAdapter
     }
 
     @Override
+    public CharSequence getPageTitle(int position) {
+        return mTitles.get(position);
+    }
+
+    @Override
     public Object instantiateItem(ViewGroup container, int position) {
         Object object = super.instantiateItem(container, position);
         // Set this object as the real instance
@@ -81,19 +92,23 @@ public class TabLayoutAdapter extends FragmentStatePagerAdapter
         return object;
     }
 
-    public void attachTabLayout(TabLayout tabLayout) {
-        mTabLayout = tabLayout;
-        if (mTabLayout != null) {
-            mTabLayout.removeOnTabSelectedListener(this);
-            mTabLayout.addOnTabSelectedListener(this);
-        }
-    }
+    public void createTabs() {
+        mViewPager.setAdapter(this);
+        mTabLayout.setupWithViewPager(mViewPager);
 
-    public void attachViewPager(ViewPager viewPager) {
-        mViewPager = viewPager;
-        if (mViewPager != null) {
-            mViewPager.removeOnPageChangeListener(this);
-            mViewPager.addOnPageChangeListener(this);
+        for (int i = 0; i < mFragments.size(); i++) {
+            TabLayout.Tab tab = mTabLayout.getTabAt(i);
+            if (tab != null && mIcons.size() > i) {
+                tab.setIcon(mIcons.get(i));
+                if (tab.getIcon() != null) {
+                    tab.getIcon().setAlpha(ALPHA_UNSELECTED);
+                }
+            }
+
+            if (tab != null && mDrawables.size() > i) {
+                tab.setIcon(mDrawables.get(i));
+                mDrawables.get(i).setAlpha(ALPHA_UNSELECTED);
+            }
         }
     }
 
@@ -118,38 +133,26 @@ public class TabLayoutAdapter extends FragmentStatePagerAdapter
 
     public void addItem(Fragment fragment, CharSequence text, @DrawableRes int icon) {
         mFragments.add(fragment);
-        TabLayout.Tab tab = mTabLayout.newTab();
 
         if (text != null) {
-            tab.setText(text);
+            mTitles.add(text);
         }
 
         if (icon != 0) {
-            tab.setIcon(icon);
-            if (mFragments.size() != 0) {
-                tab.getIcon().setAlpha(ALPHA_UNSELECTED);
-            }
+            mIcons.add(icon);
         }
-
-        mTabLayout.addTab(tab);
     }
 
     public void addItem(Fragment fragment, CharSequence text, Drawable icon) {
         mFragments.add(fragment);
-        TabLayout.Tab tab = mTabLayout.newTab();
 
         if (text != null) {
-            tab.setText(text);
+            mTitles.add(text);
         }
 
         if (icon != null) {
-            if (mFragments.size() != 0) {
-                icon.setAlpha(ALPHA_UNSELECTED);
-            }
-            tab.setIcon(icon);
+            mDrawables.add(icon);
         }
-
-        mTabLayout.addTab(tab);
     }
 
     public void saveInstanceState(Bundle outState) {
@@ -170,18 +173,14 @@ public class TabLayoutAdapter extends FragmentStatePagerAdapter
 
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
-        if (mCurrentTab != tab.getPosition()) {
-            mViewPager.setCurrentItem(tab.getPosition());
-        }
         mCurrentTab = tab.getPosition();
+
         View customView = tab.getCustomView();
         if (customView != null) {
             customView.setAlpha(1f);
         }
 
-        if (tab.getIcon() != null) {
-            tab.getIcon().setAlpha(ALPHA_SELECTED);
-        }
+        selectTabIcon(tab, true);
     }
 
     @Override
@@ -191,13 +190,12 @@ public class TabLayoutAdapter extends FragmentStatePagerAdapter
         }
 
         View customView = tab.getCustomView();
+
         if (customView != null) {
             customView.setAlpha(0.7f);
         }
 
-        if (tab.getIcon() != null) {
-            tab.getIcon().setAlpha(ALPHA_UNSELECTED);
-        }
+        selectTabIcon(tab, false);
     }
 
     @Override
@@ -207,20 +205,42 @@ public class TabLayoutAdapter extends FragmentStatePagerAdapter
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
+        // Copied from TabLayout. We need to change the icon alpha too.
+        if (mScrollState != ViewPager.SCROLL_STATE_SETTLING ||
+                mPreviousScrollState == ViewPager.SCROLL_STATE_DRAGGING) {
+            if (positionOffset < 0.5) {
+                selectTabIcon(mTabLayout.getTabAt(position), true);
+                selectTabIcon(mTabLayout.getTabAt(position + 1), false);
+            } else {
+                selectTabIcon(mTabLayout.getTabAt(position), false);
+                selectTabIcon(mTabLayout.getTabAt(position + 1), true);
+            }
+        }
     }
 
     @Override
     public void onPageSelected(int position) {
-        mCurrentTab = position;
         TabLayout.Tab tab = mTabLayout.getTabAt(position);
         if (tab != null) {
-            tab.select();
+            selectTabIcon(tab, true);
         }
     }
 
     @Override
     public void onPageScrollStateChanged(int state) {
+        mPreviousScrollState = mScrollState;
+        mScrollState = state;
+    }
 
+    private void selectTabIcon(TabLayout.Tab tab, boolean selected) {
+        if (tab != null && tab.getIcon() != null) {
+            Object tag = tab.getTag();
+            if (tag == null) {
+                tab.getIcon().setAlpha(selected ? ALPHA_SELECTED : ALPHA_UNSELECTED);
+            } else if ((Boolean) tag != selected) {
+                tab.getIcon().setAlpha(selected ? ALPHA_SELECTED : ALPHA_UNSELECTED);
+            }
+            tab.setTag(selected);
+        }
     }
 }
