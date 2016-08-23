@@ -234,13 +234,7 @@ public class TabLayoutAdapter extends FragmentStatePagerAdapter
 
     private void selectTabIcon(TabLayout.Tab tab, boolean selected) {
         if (tab != null && tab.getIcon() != null) {
-            Object tag = tab.getTag();
-            if (tag == null) {
-                tab.getIcon().setAlpha(selected ? ALPHA_SELECTED : ALPHA_UNSELECTED);
-            } else if ((Boolean) tag != selected) {
-                tab.getIcon().setAlpha(selected ? ALPHA_SELECTED : ALPHA_UNSELECTED);
-            }
-            tab.setTag(selected);
+            tab.getIcon().setAlpha(selected ? ALPHA_SELECTED : ALPHA_UNSELECTED);
         }
     }
 }
