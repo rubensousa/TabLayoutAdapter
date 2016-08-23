@@ -178,6 +178,10 @@ public class TabLayoutAdapter extends FragmentStatePagerAdapter
         if (customView != null) {
             customView.setAlpha(1f);
         }
+
+        if (tab.getIcon() != null) {
+            tab.getIcon().setAlpha(255);
+        }
     }
 
     @Override
@@ -189,6 +193,10 @@ public class TabLayoutAdapter extends FragmentStatePagerAdapter
         View customView = tab.getCustomView();
         if (customView != null) {
             customView.setAlpha(0.7f);
+        }
+
+        if (tab.getIcon() != null) {
+            tab.getIcon().setAlpha(179);
         }
     }
 
