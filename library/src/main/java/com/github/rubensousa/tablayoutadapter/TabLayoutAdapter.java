@@ -37,7 +37,7 @@ public class TabLayoutAdapter extends FragmentStatePagerAdapter
 
     private static final int ALPHA_UNSELECTED = 179;
     public static final int ALPHA_SELECTED = 255;
-    public static final String SAVE_STATE = "state";
+    public static final String SAVE_STATE = "TabLayoutAdapterState";
 
     private List<Drawable> mDrawables;
     private List<Integer> mIcons;
