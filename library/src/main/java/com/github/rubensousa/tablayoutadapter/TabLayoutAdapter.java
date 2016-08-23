@@ -19,6 +19,7 @@ package com.github.rubensousa.tablayoutadapter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.StringRes;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -39,6 +40,7 @@ public class TabLayoutAdapter extends FragmentStatePagerAdapter
     public static final int ALPHA_SELECTED = 255;
     public static final String SAVE_STATE = "TabLayoutAdapterState";
 
+    private List<View> mCustomViews;
     private List<Drawable> mDrawables;
     private List<Integer> mIcons;
     private List<CharSequence> mTitles;
@@ -51,6 +53,7 @@ public class TabLayoutAdapter extends FragmentStatePagerAdapter
 
     public TabLayoutAdapter(FragmentManager fm, TabLayout tabLayout, ViewPager viewPager) {
         super(fm);
+        mCustomViews = new ArrayList<>();
         mIcons = new ArrayList<>();
         mDrawables = new ArrayList<>();
         mFragments = new ArrayList<>();
@@ -98,25 +101,32 @@ public class TabLayoutAdapter extends FragmentStatePagerAdapter
 
         for (int i = 0; i < mFragments.size(); i++) {
             TabLayout.Tab tab = mTabLayout.getTabAt(i);
-            if (tab != null && mIcons.size() > i) {
-                tab.setIcon(mIcons.get(i));
-                if (tab.getIcon() != null) {
-                    tab.getIcon().setAlpha(ALPHA_UNSELECTED);
+
+            if (tab != null) {
+                // Give priority to custom views
+                if (mCustomViews.size() > i) {
+                    tab.setCustomView(mCustomViews.get(i));
+                } else if (mIcons.size() > i) {
+                    tab.setIcon(mIcons.get(i));
+                    if (tab.getIcon() != null) {
+                        tab.getIcon().setAlpha(ALPHA_UNSELECTED);
+                    }
+                } else if (mDrawables.size() > i) {
+                    tab.setIcon(mDrawables.get(i));
+                    mDrawables.get(i).setAlpha(ALPHA_UNSELECTED);
                 }
             }
-
-            if (tab != null && mDrawables.size() > i) {
-                tab.setIcon(mDrawables.get(i));
-                mDrawables.get(i).setAlpha(ALPHA_UNSELECTED);
-            }
         }
+
     }
 
     public void addItem(Fragment fragment, View customView) {
         mFragments.add(fragment);
-        TabLayout.Tab tab = mTabLayout.newTab();
-        tab.setCustomView(customView);
-        mTabLayout.addTab(tab);
+        mCustomViews.add(customView);
+    }
+
+    public void addCustomViewItem(Fragment fragment, @LayoutRes int layout) {
+        addItem(fragment, View.inflate(mTabLayout.getContext(), layout, mTabLayout));
     }
 
     public void addItem(Fragment fragment, @StringRes int text) {
