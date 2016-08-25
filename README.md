@@ -1,7 +1,12 @@
 # TabLayoutAdapter
-A helper adapter to manage tabs created with TabLayout
+A helper library to easily create tabs with TabLayout
 
 ### Minimum API: 14
+
+## Why was this created?
+
+I was annoyed by the fact that the TabLayout doesn't change the alpha of icon tabs and restore state automatically, so I made this.
+
 
 ## Build
 
